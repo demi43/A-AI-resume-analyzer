@@ -1,4 +1,4 @@
-name: My OpenAI Python Script
+name: My Python App CI
 
 on:
   push:
@@ -13,17 +13,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.x' # Consider being more specific, e.g., '3.10'
+          python-version: '3.10' # Or your preferred version
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install streamlit PyPDF2 openai python-dotenv  # <--- THESE ARE THE PACKAGES
+          pip install streamlit PyPDF2 openai python-dotenv # Add other dependencies if any
 
-      - name: Run script
-        run: python main.py # Or whatever your main script is
+      - name: Debug Environment and Run Script
         env:
+          # This is the variable your Python script will look for
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # For direct shell debugging, let's also pass the secret value directly
+          DEBUG_SECRET_VALUE: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "--- Workflow Shell Debug ---"
+          echo "1. Checking OPENAI_API_KEY environment variable (as seen by shell):"
+          if [ -n "$OPENAI_API_KEY" ]; then
+            echo "   OPENAI_API_KEY is SET. First 5 chars: ${OPENAI_API_KEY:0:5}"
+          else
+            echo "   OPENAI_API_KEY is NOT SET or EMPTY in shell."
+          fi
+
+          echo "2. Checking DEBUG_SECRET_VALUE (direct secret interpolation):"
+          if [ -n "$DEBUG_SECRET_VALUE" ]; then
+            echo "   DEBUG_SECRET_VALUE is SET. First 5 chars: ${DEBUG_SECRET_VALUE:0:5}"
+          else
+            echo "   DEBUG_SECRET_VALUE is NOT SET or EMPTY in shell."
+          fi
+          echo "--- End Workflow Shell Debug ---"
+          
+          echo "Running Python script..."
+          python main.py
