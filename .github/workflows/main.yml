@@ -1,20 +1,12 @@
-# 1. Add a name for your workflow (optional, but good practice)
 name: My OpenAI Python Script
 
-# 2. Add the 'on' trigger (REQUIRED)
-# This tells GitHub Actions WHEN to run this workflow.
-# Example: Run on pushes to the 'main' branch and on any pull request.
 on:
   push:
     branches:
-      - main  # Or master, or whatever your main branch is called
-      # You can specify other branches:
-      # - develop
+      - main
   pull_request:
     branches:
-      - main # Or any branch you want to trigger on PRs
-
-# 3. Then, your 'jobs' section comes
+      - main
 
 jobs:
   build:
@@ -24,10 +16,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.x'
+          python-version: '3.x' # Consider being more specific, e.g., '3.10'
+
       - name: Install dependencies
-        run: pip install openai python-dotenv # or just openai if not using .env
+        run: | # Use a multi-line run command for clarity if you have many packages
+          pip install openai python-dotenv streamlit # <--- ADDED streamlit HERE
+          # If you have a requirements.txt file, this is even better:
+          # pip install -r requirements.txt
+
       - name: Run script
+        # Assuming your script is now correctly named main.py
         run: python main.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
