@@ -28,6 +28,6 @@ jobs:
       - name: Install dependencies
         run: pip install openai python-dotenv # or just openai if not using .env
       - name: Run script
-        run: python your_script.py
+        run: python main.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
